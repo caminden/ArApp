@@ -40,12 +40,12 @@ class _HomePage extends State<HomePage> {
 
     final sphere = ArCoreSphere(
       materials: [material],
-      radius: 1.0,
+      radius: 0.2,
     );
 
     final node = ArCoreNode(
       shape: sphere,
-      position: vector.Vector3(1, 1, 1),
+      position: vector.Vector3(0, 0, -1),
     );
     controller.addArCoreNode(node);
   }
