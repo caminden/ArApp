@@ -1,5 +1,7 @@
+import 'package:ArApp/screens/HelloWorld_screen.dart';
 import 'package:ArApp/screens/start_screen.dart';
 import 'package:flutter/material.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -13,6 +15,7 @@ class MyApp extends StatelessWidget {
       initialRoute: HomePage.routeName,
       routes: {
         HomePage.routeName: (context) => HomePage(),
+        HelloWorld.routeName: (context) => HelloWorld(),
       },
     );
   }
