@@ -5,8 +5,12 @@ import 'package:vector_math/vector_math_64.dart' as vector;
 
 class HelloWorld extends StatefulWidget {
   static const routeName = '/homePage/HelloWorld';
+
   @override
-  _HelloWorldState createState() => _HelloWorldState();
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _HelloWorldState();
+  }
 }
 
 class _HelloWorldState extends State<HelloWorld> {
@@ -14,15 +18,13 @@ class _HelloWorldState extends State<HelloWorld> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Hello World'),
         ),
         body: ArCoreView(
           onArCoreViewCreated: _onArCoreViewCreated,
         ),
-      ),
     );
   }
 
@@ -35,12 +37,12 @@ class _HelloWorldState extends State<HelloWorld> {
   }
 
   Future _addSphere(ArCoreController controller) async {
-    //final ByteData textureBytes = await rootBundle.load('assets/Earth.jpg');
+    final ByteData textureBytes = await rootBundle.load('assets/images/earth.jpg');
 
     final material = ArCoreMaterial(
         color: Colors.yellow,
         roughness: 1.0,
-        //textureBytes: textureBytes.buffer.asUint8List()
+        textureBytes: textureBytes.buffer.asUint8List()
         );
     final sphere = ArCoreSphere(
       materials: [material],

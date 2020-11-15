@@ -1,3 +1,4 @@
+import 'package:ArApp/screens/AugImage_screen.dart';
 import 'package:ArApp/screens/HelloWorld_screen.dart';
 import 'package:ArApp/screens/start_screen.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,8 @@ class MyApp extends StatelessWidget {
       routes: {
         HomePage.routeName: (context) => HomePage(),
         HelloWorld.routeName: (context) => HelloWorld(),
+        AugImages.routeName: (context) => AugImages(),
+        
       },
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:ArApp/screens/AugImage_screen.dart';
 import 'package:ArApp/screens/HelloWorld_screen.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +41,16 @@ class _HomePage extends State<HomePage> {
               Text("Buttons for different screens"),
               FlatButton(
                 child: Text("3D objects"),
-                onPressed: con.loadScreen,
+                onPressed: con.loadHelloWorldScreen,
                 color: Color.fromARGB(100, 100, 50, 50),
               ),
+              SizedBox(height: 10.0,),
+              FlatButton(
+                child: Text("Augmented Image"),
+                onPressed: con.loadAugImagesScreen,
+                color: Color.fromARGB(100, 100, 50, 50),
+              ),
+              //Container(child: Image.asset('assets/images/earth.jpg')),
             ],
           ),
         ),
@@ -54,7 +62,11 @@ class _Controller{
   _HomePage _state;
 _Controller(this._state);
 
-void loadScreen(){
+void loadHelloWorldScreen(){
   Navigator.pushNamed(_state.context, HelloWorld.routeName);
+}
+
+void loadAugImagesScreen(){
+  Navigator.pushNamed(_state.context, AugImages.routeName);
 }
 }
