@@ -1,3 +1,8 @@
+import 'dart:typed_data';
+
+import 'package:ArApp/Maps/AugImageMap.dart';
+import 'package:ArApp/screens/AddImage_screen.dart';
+import 'package:ArApp/screens/print_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
@@ -13,57 +18,80 @@ class AugImages extends StatefulWidget {
 
 class _AugImagesState extends State<AugImages> {
   ArCoreController arCoreController;
-  Map<int, ArCoreAugmentedImage> augmentedImagesMap = Map();
+  Map<String, ArCoreAugmentedImage> augmentedImagesMap = Map();
+  Map<String, Uint8List> bytesMap = Map();
+  _Controller con;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    con = _Controller(this);
+  }
+
+  void render(fn) => setState(fn);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('AugmentedPage'),
-        ),
-        body: ArCoreView(
-          onArCoreViewCreated: _onArCoreViewCreated,
-          type: ArCoreViewType.AUGMENTEDIMAGES,
-        ),
+      appBar: AppBar(
+        title: const Text('AugmentedPage'),
+        actions: <Widget>[
+          FlatButton(
+              child: Text("Add Image"),
+              onPressed: con.loadAddImageScreen,
+              color: Color.fromARGB(100, 100, 50, 50),
+            ),
+            FlatButton(
+              child: Text("View Database"),
+              onPressed: con.viewMap,
+              color: Color.fromARGB(100, 100, 50, 50),
+            ),
+        ],
+      ),
+      body: ArCoreView(
+            onArCoreViewCreated: _onArCoreViewCreated,
+            type: ArCoreViewType.AUGMENTEDIMAGES,
+          ),
     );
   }
 
   void _onArCoreViewCreated(ArCoreController controller) async {
     arCoreController = controller;
     arCoreController.onTrackingImage = _handleOnTrackingImage;
-    loadSingleImage();
+    loadImages();
     //OR
     //loadImagesDatabase();
   }
 
-  loadSingleImage() async {
-    final ByteData bytes =
-        await rootBundle.load('assets/images/earth.jpg');
-    print("data: $bytes");
-    arCoreController.loadSingleAugmentedImage(
-        bytes: bytes.buffer.asUint8List());
-  }
+  loadImages() async {
+    final ByteData bytes1 = await rootBundle.load('assets/images/earth.jpg');
+    final ByteData bytes2 = await rootBundle.load('assets/images/flowers.jpg');
 
-  loadImagesDatabase() async {
-    final ByteData bytes = await rootBundle.load('assets/myimages.imgdb');
-    arCoreController.loadAugmentedImagesDatabase(
-        bytes: bytes.buffer.asUint8List());
+    bytesMap['earth'] = bytes1.buffer.asUint8List();
+    bytesMap['flowers'] = bytes2.buffer.asUint8List();
+
+    arCoreController.loadMultipleAugmentedImage(bytesMap: bytesMap);
   }
 
   _handleOnTrackingImage(ArCoreAugmentedImage augmentedImage) {
-    if (!augmentedImagesMap.containsKey(augmentedImage.index)) {
-      augmentedImagesMap[augmentedImage.index] = augmentedImage;
-      _addSphere(augmentedImage);
+    if (!augmentedImagesMap.containsKey(augmentedImage.name)) {
+      augmentedImagesMap[augmentedImage.name] = augmentedImage;
+      _addSphere(augmentedImage, augmentedImage.name);
     }
   }
 
-  Future _addSphere(ArCoreAugmentedImage augmentedImage) async {
-    final ByteData textureBytes = await rootBundle.load('assets/images/earth.jpg');
+  Future _addSphere(ArCoreAugmentedImage augmentedImage, String imgName) async {
+    AugImageMap map;
+    //final ByteData textureBytes =
+        //await rootBundle.load('assets/images/$imgName.jpg');
 
     final material = ArCoreMaterial(
       color: Color.fromARGB(120, 66, 134, 244),
-      textureBytes: textureBytes.buffer.asUint8List(),
+      //textureBytes: textureBytes.buffer.asUint8List(),
+      metallic: 1.0,
     );
+
     final sphere = ArCoreSphere(
       materials: [material],
       radius: augmentedImage.extentX / 2,
@@ -78,5 +106,19 @@ class _AugImagesState extends State<AugImages> {
   void dispose() {
     arCoreController.dispose();
     super.dispose();
+  }
+}
+
+class _Controller{
+_AugImagesState _state;
+  _Controller(this._state);
+
+  Future<void> loadAddImageScreen() async {
+    await Navigator.pushNamed(_state.context, AddImageScreen.routeName, arguments: _state.bytesMap);
+    
+  }
+
+  void viewMap() {
+    Navigator.pushNamed(_state.context, PrintScreen.routeName, arguments: _state.bytesMap);
   }
 }

@@ -1,5 +1,7 @@
 import 'package:ArApp/screens/AugImage_screen.dart';
 import 'package:ArApp/screens/HelloWorld_screen.dart';
+import 'package:ArApp/screens/addimage_screen.dart';
+import 'package:ArApp/screens/print_screen.dart';
 import 'package:ArApp/screens/start_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +20,8 @@ class MyApp extends StatelessWidget {
         HomePage.routeName: (context) => HomePage(),
         HelloWorld.routeName: (context) => HelloWorld(),
         AugImages.routeName: (context) => AugImages(),
-        
+        AddImageScreen.routeName: (context) => AddImageScreen(),
+        PrintScreen.routeName: (context) => PrintScreen(),
       },
     );
   }
