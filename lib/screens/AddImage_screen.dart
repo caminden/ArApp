@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:ArApp/screens/AugImage_screen.dart';
-import 'package:ArApp/screens/start_screen.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -127,10 +125,8 @@ class _Controller {
     
     if (_state.image != null) {
       try {
+        //try adding image byte data with name into map from augImagescreen 
         map[name] = _state.image.readAsBytesSync();
-        //Uint8List data = _state.image.readAsBytesSync(); debug statements
-        //print("Name: $name, Dat: $data");
-        //print(map['earth']);
         _state.arCoreController.loadMultipleAugmentedImage(bytesMap: map);
       } catch (e) {
         print("****************************************");

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:ArApp/Maps/AugImageMap.dart';
 import 'package:ArApp/screens/AddImage_screen.dart';
 import 'package:ArApp/screens/print_screen.dart';

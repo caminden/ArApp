@@ -1,14 +1,7 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:ArApp/Maps/AugImageMap.dart';
 import 'package:ArApp/screens/AugImage_screen.dart';
 import 'package:ArApp/screens/HelloWorld_screen.dart';
-import 'package:ArApp/screens/addimage_screen.dart';
-import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
-import "package:vector_math/vector_math_64.dart" as vector;
 
 class HomePage extends StatefulWidget {
   static const routeName = '/homePage';
