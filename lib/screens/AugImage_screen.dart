@@ -86,7 +86,7 @@ class _AugImagesState extends State<AugImages> {
   Future _addSphere(ArCoreAugmentedImage augmentedImage, String imgName) async {
 
     final material = ArCoreMaterial(
-      color: Color.fromARGB(255, 66, 134, 244),
+      color: Color.fromARGB(155, 66, 134, 244),
       textureBytes: map.bytesMap[imgName],
       metallic: 1.0,
     );

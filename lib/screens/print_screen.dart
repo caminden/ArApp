@@ -16,7 +16,7 @@ class PrintScreen extends StatelessWidget {
           children: <Widget>[
             Image.memory(bytesMap['flowers']),
             Image.memory(bytesMap['earth']),
-            Image.memory(bytesMap['car']),
+            bytesMap['car'] == null ? SizedBox() : Image.memory(bytesMap['car']),
           ],
         ),
       ),
