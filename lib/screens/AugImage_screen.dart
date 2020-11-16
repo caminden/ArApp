@@ -11,7 +11,6 @@ class AugImages extends StatefulWidget {
   static const routeName = '/homePage/AugImages';
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _AugImagesState();
   }
 }
@@ -19,12 +18,11 @@ class AugImages extends StatefulWidget {
 class _AugImagesState extends State<AugImages> {
   ArCoreController arCoreController;
   Map<String, ArCoreAugmentedImage> augmentedImagesMap = Map();
-  Map<String, Uint8List> bytesMap = Map();
+  AugImageMap map;
   _Controller con;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     con = _Controller(this);
   }
@@ -33,26 +31,29 @@ class _AugImagesState extends State<AugImages> {
 
   @override
   Widget build(BuildContext context) {
+    //get AugImageMap from homescreen, which contains the bytesMap
+    map = ModalRoute.of(context).settings.arguments;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('AugmentedPage'),
         actions: <Widget>[
           FlatButton(
-              child: Text("Add Image"),
-              onPressed: con.loadAddImageScreen,
-              color: Color.fromARGB(100, 100, 50, 50),
-            ),
-            FlatButton(
-              child: Text("View Database"),
-              onPressed: con.viewMap,
-              color: Color.fromARGB(100, 100, 50, 50),
-            ),
+            child: Text("Add Image"),
+            onPressed: con.loadAddImageScreen,
+            color: Color.fromARGB(100, 100, 50, 50),
+          ),
+          FlatButton(
+            child: Text("View Database"),
+            onPressed: con.viewMap,
+            color: Color.fromARGB(100, 100, 50, 50),
+          ),
         ],
       ),
       body: ArCoreView(
-            onArCoreViewCreated: _onArCoreViewCreated,
-            type: ArCoreViewType.AUGMENTEDIMAGES,
-          ),
+        onArCoreViewCreated: _onArCoreViewCreated,
+        type: ArCoreViewType.AUGMENTEDIMAGES,
+      ),
     );
   }
 
@@ -68,10 +69,12 @@ class _AugImagesState extends State<AugImages> {
     final ByteData bytes1 = await rootBundle.load('assets/images/earth.jpg');
     final ByteData bytes2 = await rootBundle.load('assets/images/flowers.jpg');
 
-    bytesMap['earth'] = bytes1.buffer.asUint8List();
-    bytesMap['flowers'] = bytes2.buffer.asUint8List();
+    //add into AugImageMap bytesMap the data for each bytes and
+    //the corresponding string
+    map.bytesMap['earth'] = bytes1.buffer.asUint8List();
+    map.bytesMap['flowers'] = bytes2.buffer.asUint8List();
 
-    arCoreController.loadMultipleAugmentedImage(bytesMap: bytesMap);
+    arCoreController.loadMultipleAugmentedImage(bytesMap: map.bytesMap);
   }
 
   _handleOnTrackingImage(ArCoreAugmentedImage augmentedImage) {
@@ -82,13 +85,10 @@ class _AugImagesState extends State<AugImages> {
   }
 
   Future _addSphere(ArCoreAugmentedImage augmentedImage, String imgName) async {
-    AugImageMap map;
-    //final ByteData textureBytes =
-        //await rootBundle.load('assets/images/$imgName.jpg');
 
     final material = ArCoreMaterial(
-      color: Color.fromARGB(120, 66, 134, 244),
-      //textureBytes: textureBytes.buffer.asUint8List(),
+      color: Color.fromARGB(255, 66, 134, 244),
+      textureBytes: map.bytesMap[imgName],
       metallic: 1.0,
     );
 
@@ -102,6 +102,7 @@ class _AugImagesState extends State<AugImages> {
     arCoreController.addArCoreNodeToAugmentedImage(node, augmentedImage.index);
   }
 
+
   @override
   void dispose() {
     arCoreController.dispose();
@@ -109,16 +110,21 @@ class _AugImagesState extends State<AugImages> {
   }
 }
 
-class _Controller{
-_AugImagesState _state;
+class _Controller {
+  _AugImagesState _state;
   _Controller(this._state);
 
-  Future<void> loadAddImageScreen() async {
-    await Navigator.pushNamed(_state.context, AddImageScreen.routeName, arguments: _state.bytesMap);
-    
+  void loadAddImageScreen() async {
+    final value = await Navigator.pushNamed(_state.context, AddImageScreen.routeName,
+        arguments: {
+          "bytesMap": _state.map.bytesMap,
+          "arCoreController": _state.arCoreController
+        });
+    _state.augmentedImagesMap = Map();
   }
 
   void viewMap() {
-    Navigator.pushNamed(_state.context, PrintScreen.routeName, arguments: _state.bytesMap);
+    Navigator.pushNamed(_state.context, PrintScreen.routeName,
+        arguments: _state.map.bytesMap);
   }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:ArApp/screens/AugImage_screen.dart';
 import 'package:ArApp/screens/start_screen.dart';
+import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -20,6 +21,7 @@ class _AddImage extends State<AddImageScreen> {
   File image;
   var formKey = GlobalKey<FormState>();
   Map<String, Uint8List> bytesMap;
+  ArCoreController arCoreController;
 
   @override
   void initState() {
@@ -32,8 +34,10 @@ class _AddImage extends State<AddImageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bytesMap ??= ModalRoute.of(context).settings.arguments;
-    
+    Map args = ModalRoute.of(context).settings.arguments;
+    bytesMap ??= args['bytesMap'];
+    arCoreController ??= args['arCoreController'];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Add"),
@@ -69,11 +73,11 @@ class _AddImage extends State<AddImageScreen> {
                         onSelected: con.getPicture,
                         itemBuilder: (context) => <PopupMenuEntry<String>>[
                           PopupMenuItem(
-                            value: 'camera',
+                            value: 'Gallery',
                             child: Row(
                               children: <Widget>[
-                                Icon(Icons.photo_camera),
-                                Text("Camera"),
+                                Icon(Icons.photo_album),
+                                Text("Gallery"),
                               ],
                             ),
                           ),
@@ -91,6 +95,7 @@ class _AddImage extends State<AddImageScreen> {
                 onSaved: con.onSavedName,
                 validator: con.validate,
               ),
+              //Text('$bytesMap'),
             ],
           ),
         ),
@@ -108,19 +113,38 @@ class _Controller {
     this.name = value;
   }
 
-  String validate(String s){
+  String validate(String s) {
+    if(s == null){
+      return "Name must not be empty";
+    }
     return null;
   }
 
   void save(Map<String, Uint8List> map) async {
-    _state.formKey.currentState.save();
-
-    if (_state.image != null && name != null) {
-      Uint8List data = _state.image.readAsBytesSync();
-      map[name] = _state.image.readAsBytesSync();
-      //print("Name: $name, Dat: $data");
-      print(map['earth']);
-      Navigator.pushReplacementNamed(_state.context, HomePage.routeName);
+    if(_state.formKey.currentState.validate()){
+        _state.formKey.currentState.save();
+    }
+    
+    if (_state.image != null) {
+      try {
+        map[name] = _state.image.readAsBytesSync();
+        //Uint8List data = _state.image.readAsBytesSync(); debug statements
+        //print("Name: $name, Dat: $data");
+        //print(map['earth']);
+        _state.arCoreController.loadMultipleAugmentedImage(bytesMap: map);
+      } catch (e) {
+        print("****************************************");
+        print("$e");
+      }
+      Navigator.pop(_state.context);
+    }
+    else if(_state.image == null){
+      print("*******************");
+      print("image is null");
+    }
+    else{
+      print("*******************");
+      print("name is null");
     }
   }
 
@@ -128,7 +152,7 @@ class _Controller {
     PickedFile _image;
     ImagePicker picker = ImagePicker();
     try {
-      _image = await picker.getImage(source: ImageSource.camera);
+      _image = await picker.getImage(source: ImageSource.gallery);
       _state.render(() {
         _state.image = File(_image.path);
       });

@@ -1,8 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
-
 class AugImageMap{
-  Map<String, ArCoreAugmentedImage> augmentedImagesMap;
-  Map<String, Uint8List> bytesMap = Map();
+  //bytesMap that holds a pictures byte data and a name to 
+  //map it to
+  Map<String, Uint8List> bytesMap;
+
+  AugImageMap(){
+    bytesMap = Map();
+  }
+  
+
 }

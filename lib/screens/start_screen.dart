@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:ArApp/Maps/AugImageMap.dart';
 import 'package:ArApp/screens/AugImage_screen.dart';
 import 'package:ArApp/screens/HelloWorld_screen.dart';
@@ -74,10 +73,7 @@ class _Controller {
   }
 
   void loadAugImagesScreen() {
-    Navigator.pushNamed(_state.context, AugImages.routeName);
+    Navigator.pushNamed(_state.context, AugImages.routeName, arguments: _state.map);
   }
 
-  void loadAddImageScreen() {
-    Navigator.pushNamed(_state.context, AddImageScreen.routeName);
-  }
 }
